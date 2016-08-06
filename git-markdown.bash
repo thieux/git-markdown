@@ -18,6 +18,13 @@ function catRevision() {
   done
 }
 
+function catRevisionList() {
+  for revision in `git log | tac | grep commit | cut -d ' ' -f 2`; do
+    message=`git show --oneline $revision | head -n1 | cut -c9-`
+    catRevision "$revision" "$message"
+  done
+}
+
 cd simple-lang
 git checkout master
 
@@ -25,11 +32,6 @@ if [ -e /tmp/article.md ]; then
   rm /tmp/article.md
 fi
 
-for revision in `git log | tac | grep commit | cut -d ' ' -f 2`; do
-  echo "$revision"
-  message=`git show --oneline $revision | head -n1 | cut -c9-`
-  catRevision "$revision" "$message" >> /tmp/article.md
-done
-
+catRevisionList >> /tmp/article.md
 pandoc /tmp/article.md -s -o /tmp/article.html
 firefox /tmp/article.html&
