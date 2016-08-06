@@ -2,10 +2,14 @@
 
 function catRevision() {
   local revision="$1"
+  local message="$2"
 
   git checkout "$revision"
+
+  echo "# $message"
+
   for f in `find src -iname '*.java'`; do
-    echo "# $f at $revision"
+    echo "## $f"
     echo
     echo '```java'
     cat "$f" 
@@ -23,7 +27,8 @@ fi
 
 for revision in `git log | tac | grep commit | cut -d ' ' -f 2`; do
   echo "$revision"
-  catRevision "$revision" >> /tmp/article.md
+  message=`git show --oneline $revision | head -n1 | cut -c9-`
+  catRevision "$revision" "$message" >> /tmp/article.md
 done
 
 pandoc /tmp/article.md -s -o /tmp/article.html
