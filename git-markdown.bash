@@ -25,8 +25,14 @@ function catRevisionList() {
   done
 }
 
-cd simple-lang
-git checkout master
+if [ $# -ne 1 ]; then
+  echo 'You have to specify a git repository path.'
+  exit
+else
+  cp -R "$1" /tmp/repo
+fi
+
+cd /tmp/repo
 
 if [ -e /tmp/article.md ]; then
   rm /tmp/article.md
