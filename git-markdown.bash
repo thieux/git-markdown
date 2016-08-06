@@ -17,7 +17,9 @@ function catRevision() {
 cd simple-lang
 git checkout master
 
-rm /tmp/article.md
+if [ -e /tmp/article.md ]; then
+  rm /tmp/article.md
+fi
 
 for revision in `git log | tac | grep commit | cut -d ' ' -f 2`; do
   echo "$revision"
