@@ -5,7 +5,7 @@ function catRevision() {
 
   git checkout "$revision"
   for f in `find src -iname '*.java'`; do
-    echo $f
+    echo "# $f at $revision"
     echo
     echo '```java'
     cat "$f" 
@@ -15,6 +15,14 @@ function catRevision() {
 }
 
 cd simple-lang
-catRevision '2b74b22214bca0264a1f9db9ebea2a3a85efc1c3' > /tmp/article.md
-pandoc /tmp/article.md -s -o /tmp/article.pdf
-evince /tmp/article.pdf&
+git checkout master
+
+rm /tmp/article.md
+
+for revision in `git log | tac | grep commit | cut -d ' ' -f 2`; do
+  echo "$revision"
+  catRevision "$revision" >> /tmp/article.md
+done
+
+pandoc /tmp/article.md -s -o /tmp/article.html
+firefox /tmp/article.html&
